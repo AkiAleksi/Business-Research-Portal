@@ -1,0 +1,17 @@
+# BMAD Configuration
+# Business Research Portal
+
+project_name: "Business Research Portal"
+user_name: "Aki"
+communication_language: "fi"  # Suomi
+document_output_language: "fi"
+user_skill_level: "intermediate"
+
+# Folders
+output_folder: "docs"
+planning_artifacts: "docs"
+product_knowledge: "docs"
+
+# Project settings
+project_type: "web-application"
+target_platform: "web"
