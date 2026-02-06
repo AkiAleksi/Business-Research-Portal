@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +15,9 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const [email, setEmail] = useState("dev@example.com");
+  const [password, setPassword] = useState("dev");
+  const [isLoading, setIsLoading] = useState(false);
 
   const getErrorMessage = (error: string) => {
     switch (error) {
@@ -24,9 +28,18 @@ function LoginForm() {
         return "Tämä sähköposti on jo käytössä toisella tilillä.";
       case "SessionRequired":
         return "Kirjaudu sisään jatkaaksesi.";
+      case "CredentialsSignin":
+        return "Virheellinen sähköposti tai salasana.";
       default:
         return "Kirjautuminen epäonnistui. Yritä uudelleen.";
     }
+  };
+
+  const handleCredentialsLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    await signIn("credentials", { email, password, callbackUrl });
+    setIsLoading(false);
   };
 
   return (
@@ -47,6 +60,39 @@ function LoginForm() {
             <AlertDescription>{getErrorMessage(error)}</AlertDescription>
           </Alert>
         )}
+
+        {/* Development login form */}
+        <form onSubmit={handleCredentialsLogin} className="space-y-3">
+          <div className="rounded-md bg-muted/50 p-2 text-xs text-muted-foreground text-center">
+            🔧 Kehitystila - mikä tahansa sähköposti toimii
+          </div>
+          <Input
+            type="email"
+            placeholder="Sähköposti"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Salasana"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "Kirjaudutaan..." : "Kirjaudu kehitystilillä"}
+          </Button>
+        </form>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">tai</span>
+          </div>
+        </div>
 
         <Button
           className="w-full"

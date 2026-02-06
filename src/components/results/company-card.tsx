@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, MapPin, Calendar, Briefcase } from "lucide-react";
+import { Building2, MapPin, Calendar, Briefcase, Globe } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -16,6 +16,7 @@ interface CompanyData {
     city: string;
   } | null;
   status: string;
+  website?: string;
 }
 
 interface CompanyCardProps {
@@ -72,6 +73,20 @@ export function CompanyCard({ data }: CompanyCardProps) {
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span>Rekisteröity: {formatDate(data.registrationDate)}</span>
           </div>
+
+          {data.website && (
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-muted-foreground" />
+              <a
+                href={data.website.startsWith("http") ? data.website : `https://${data.website}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                {data.website}
+              </a>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
