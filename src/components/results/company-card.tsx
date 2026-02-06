@@ -33,21 +33,23 @@ export function CompanyCard({ data }: CompanyCardProps) {
   };
 
   return (
-    <Card>
+    <Card className="glass overflow-hidden relative hover:shadow-lg transition-shadow duration-300">
+      {/* Blue accent bar */}
+      <div className="h-1 bg-gradient-to-r from-primary to-primary/60" />
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-xl font-bold">
             <Building2 className="h-5 w-5 text-primary" />
             {data.name}
           </CardTitle>
-          <Badge variant="outline">YTJ</Badge>
+          <Badge>YTJ</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="grid gap-3 text-sm">
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground w-24">Y-tunnus:</span>
-            <span className="font-mono font-medium">{data.businessId}</span>
+            <span className="font-mono font-medium px-2 py-0.5 rounded bg-primary/10 text-primary">{data.businessId}</span>
           </div>
 
           <div className="flex items-center gap-2">

@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fi">
-      <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning>
+    <html lang="fi" className="scroll-smooth">
+      <body className={`${inter.variable} font-sans antialiased selection:bg-primary/20 selection:text-primary`} suppressHydrationWarning>
         <Providers>
           <div className="min-h-screen flex flex-col">
             <Header />

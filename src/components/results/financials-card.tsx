@@ -40,14 +40,15 @@ export function FinancialsCard({ data }: FinancialsCardProps) {
 
   if (!data.dataAvailable) {
     return (
-      <Card>
+      <Card className="glass overflow-hidden relative hover:shadow-lg transition-shadow duration-300">
+        <div className="h-1 bg-gradient-to-r from-accent to-accent/60" />
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-xl font-bold">
               <TrendingUp className="h-5 w-5 text-primary" />
               Taloustiedot
             </CardTitle>
-            <Badge variant="outline">PRH</Badge>
+            <Badge variant="secondary">PRH</Badge>
           </div>
         </CardHeader>
         <CardContent>
@@ -62,51 +63,53 @@ export function FinancialsCard({ data }: FinancialsCardProps) {
   const hasNumericData = data.revenue !== null || data.profit !== null || data.equity !== null || data.employees !== null;
 
   return (
-    <Card>
+    <Card className="glass overflow-hidden relative hover:shadow-lg transition-shadow duration-300">
+      {/* Orange accent bar */}
+      <div className="h-1 bg-gradient-to-r from-accent to-accent/60" />
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-xl font-bold">
             <TrendingUp className="h-5 w-5 text-primary" />
             Taloustiedot {data.fiscalYear}
           </CardTitle>
-          <Badge variant="outline">{data.source || "PRH"}</Badge>
+          <Badge variant="secondary">{data.source || "PRH"}</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {hasNumericData && (
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
               <div className="flex items-center gap-1 text-muted-foreground text-xs">
                 <Wallet className="h-3 w-3" />
                 Liikevaihto
               </div>
-              <p className="text-lg font-semibold">{formatCurrency(data.revenue)}</p>
+              <p className="text-2xl font-bold tabular-nums tracking-tight">{formatCurrency(data.revenue)}</p>
             </div>
 
-            <div className="space-y-1">
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
               <div className="flex items-center gap-1 text-muted-foreground text-xs">
                 <PiggyBank className="h-3 w-3" />
                 Tulos
               </div>
-              <p className={`text-lg font-semibold ${data.profit && data.profit < 0 ? "text-destructive" : ""}`}>
+              <p className={`text-2xl font-bold tabular-nums tracking-tight ${data.profit && data.profit < 0 ? "text-destructive" : ""}`}>
                 {formatCurrency(data.profit)}
               </p>
             </div>
 
-            <div className="space-y-1">
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
               <div className="flex items-center gap-1 text-muted-foreground text-xs">
                 <TrendingUp className="h-3 w-3" />
                 Oma pääoma
               </div>
-              <p className="text-lg font-semibold">{formatCurrency(data.equity)}</p>
+              <p className="text-2xl font-bold tabular-nums tracking-tight">{formatCurrency(data.equity)}</p>
             </div>
 
-            <div className="space-y-1">
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
               <div className="flex items-center gap-1 text-muted-foreground text-xs">
                 <Users className="h-3 w-3" />
                 Henkilöstö
               </div>
-              <p className="text-lg font-semibold">{formatNumber(data.employees)}</p>
+              <p className="text-2xl font-bold tabular-nums tracking-tight">{formatNumber(data.employees)}</p>
             </div>
           </div>
         )}

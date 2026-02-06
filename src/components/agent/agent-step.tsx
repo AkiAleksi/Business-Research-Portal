@@ -33,15 +33,23 @@ const statusBgColors = {
   error: "bg-destructive/10",
 };
 
+const statusBorderColors = {
+  pending: "border",
+  loading: "border-primary/30 shadow-sm shadow-primary/5",
+  complete: "border-green-200 dark:border-green-900/30",
+  error: "border-destructive/30",
+};
+
 export function AgentStep({ name, description, status, source }: AgentStepProps) {
   const Icon = statusIcons[status];
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg bg-card border">
+    <div className={cn("flex items-center gap-3 p-3 rounded-lg bg-card", statusBorderColors[status])}>
       <div
         className={cn(
           "flex items-center justify-center w-8 h-8 rounded-full",
-          statusBgColors[status]
+          statusBgColors[status],
+          status === "loading" && "animate-pulse-ring"
         )}
       >
         <Icon

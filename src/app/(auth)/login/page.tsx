@@ -43,10 +43,12 @@ function LoginForm() {
   };
 
   return (
-    <Card>
+    <Card className="glass-strong shadow-xl">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
-          <Building2 className="h-10 w-10 text-primary" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white shadow-lg shadow-primary/25">
+            <Building2 className="h-8 w-8" />
+          </div>
         </div>
         <CardTitle className="text-2xl">Kirjaudu sisään</CardTitle>
         <CardDescription>
@@ -64,7 +66,7 @@ function LoginForm() {
         {/* Development login form */}
         <form onSubmit={handleCredentialsLogin} className="space-y-3">
           <div className="rounded-md bg-muted/50 p-2 text-xs text-muted-foreground text-center">
-            🔧 Kehitystila - mikä tahansa sähköposti toimii
+            Kehitystila - mikä tahansa sähköposti toimii
           </div>
           <Input
             type="email"
@@ -80,7 +82,7 @@ function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="w-full shadow-md shadow-primary/20" disabled={isLoading}>
             {isLoading ? "Kirjaudutaan..." : "Kirjaudu kehitystilillä"}
           </Button>
         </form>
@@ -134,10 +136,10 @@ function LoginForm() {
 
 function LoginSkeleton() {
   return (
-    <Card>
+    <Card className="glass-strong shadow-xl">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
-          <Skeleton className="h-10 w-10 rounded-full" />
+          <Skeleton className="h-16 w-16 rounded-2xl" />
         </div>
         <Skeleton className="h-8 w-48 mx-auto" />
         <Skeleton className="h-4 w-64 mx-auto mt-2" />

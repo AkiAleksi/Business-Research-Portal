@@ -8,7 +8,7 @@ export function CompanyResearch() {
     <div className="space-y-6">
       <ToolRenderers />
       <CopilotChat
-        className="min-h-[500px] rounded-lg border bg-card shadow-sm"
+        className="min-h-[500px] rounded-xl glass shadow-lg ring-1 ring-border/50"
         instructions={`Olet suomalaisten yritysten tutkija-agentti. Kun käyttäjä antaa yrityksen nimen:
 1. Hae ensin yrityksen perustiedot YTJ:stä (searchYTJ).
 2. Jos YTJ palauttaa Y-tunnuksen, hae taloustiedot (searchPRH) käyttäen Y-tunnusta ja yrityksen nimeä.

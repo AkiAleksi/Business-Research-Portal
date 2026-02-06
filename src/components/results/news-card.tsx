@@ -33,14 +33,15 @@ export function NewsCard({ items, companyName }: NewsCardProps) {
 
   if (items.length === 0) {
     return (
-      <Card className="md:col-span-2">
+      <Card className="md:col-span-2 glass overflow-hidden relative hover:shadow-lg transition-shadow duration-300">
+        <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-400" />
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-xl font-bold">
               <Newspaper className="h-5 w-5 text-primary" />
               Uutiset
             </CardTitle>
-            <Badge variant="outline">Uutiset</Badge>
+            <Badge>Uutiset</Badge>
           </div>
         </CardHeader>
         <CardContent>
@@ -53,25 +54,27 @@ export function NewsCard({ items, companyName }: NewsCardProps) {
   }
 
   return (
-    <Card className="md:col-span-2">
+    <Card className="md:col-span-2 glass overflow-hidden relative hover:shadow-lg transition-shadow duration-300">
+      {/* Green accent bar */}
+      <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-400" />
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-xl font-bold">
             <Newspaper className="h-5 w-5 text-primary" />
             Viimeisimmät uutiset
           </CardTitle>
-          <Badge variant="outline">Uutiset</Badge>
+          <Badge>Uutiset</Badge>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="divide-y divide-border/50">
           {items.map((item) => (
             <a
               key={item.id}
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block p-3 -mx-3 rounded-lg hover:bg-muted transition-colors group"
+              className="block p-3 -mx-3 rounded-lg hover:bg-muted/60 hover:translate-x-1 transition-all duration-200 group"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">

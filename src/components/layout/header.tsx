@@ -10,11 +10,11 @@ export function Header() {
   const { data: session, status } = useSession();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full glass-strong shadow-sm border-b border-border/50">
       <div className="container mx-auto flex h-14 items-center px-4">
         <Link href="/" className="flex items-center gap-2">
           <Building2 className="h-6 w-6 text-primary" />
-          <span className="font-semibold text-lg">Business Research Portal</span>
+          <span className="font-bold text-lg tracking-tight">Business Research <span className="text-primary">Portal</span></span>
         </Link>
         <nav className="ml-auto flex items-center gap-4">
           {status === "loading" ? (
@@ -33,7 +33,7 @@ export function Header() {
               </Button>
             </div>
           ) : (
-            <Button asChild size="sm">
+            <Button asChild size="sm" className="shadow-sm">
               <Link href="/login">Kirjaudu sisään</Link>
             </Button>
           )}
