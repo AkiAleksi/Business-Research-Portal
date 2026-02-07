@@ -31,7 +31,7 @@ Vastaa aina suomeksi. Esitä yhteenveto löydetyistä tiedoista.`,
       description:
         "Hae yrityksen perustiedot YTJ:stä (Yritys- ja yhteisötietojärjestelmä). Palauttaa yrityksen nimen, Y-tunnuksen, toimialan, osoitteen ja rekisteröintipäivän. Tukee hakua sekä nimellä että Y-tunnuksella (esim. 0728786-8).",
       parameters: z.object({
-        companyName: z.string().describe("Yrityksen nimi tai Y-tunnus (esim. 0728786-8)"),
+        companyName: z.string().trim().max(200).describe("Yrityksen nimi tai Y-tunnus (esim. 0728786-8)"),
       }),
       execute: async ({ companyName }: { companyName: string }) => {
         const result = await searchYTJ(companyName);
@@ -46,8 +46,8 @@ Vastaa aina suomeksi. Esitä yhteenveto löydetyistä tiedoista.`,
       description:
         "Hae yrityksen taloustiedot (liikevaihto, tulos, henkilöstömäärä). Käyttää Tavily-hakua ja Claude AI:ta tietojen analysointiin.",
       parameters: z.object({
-        businessId: z.string().describe("Yrityksen Y-tunnus (esim. 0112038-9)"),
-        companyName: z.string().describe("Yrityksen nimi (tarvitaan hakuun)"),
+        businessId: z.string().trim().max(20).describe("Yrityksen Y-tunnus (esim. 0112038-9)"),
+        companyName: z.string().trim().max(200).describe("Yrityksen nimi (tarvitaan hakuun)"),
       }),
       execute: async ({ businessId, companyName }: { businessId: string; companyName: string }) => {
         const result = await searchPRH(businessId, companyName);
@@ -59,7 +59,7 @@ Vastaa aina suomeksi. Esitä yhteenveto löydetyistä tiedoista.`,
       description:
         "Hae yritystä koskevat viimeisimmät uutiset. Palauttaa uutisotsikot, lähteet ja linkit.",
       parameters: z.object({
-        companyName: z.string().describe("Yrityksen nimi, jonka uutisia haetaan"),
+        companyName: z.string().trim().max(200).describe("Yrityksen nimi, jonka uutisia haetaan"),
       }),
       execute: async ({ companyName }: { companyName: string }) => {
         const result = await searchNews(companyName);
@@ -69,9 +69,9 @@ Vastaa aina suomeksi. Esitä yhteenveto löydetyistä tiedoista.`,
   ],
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// CopilotKit:n agents-tyyppi ei ole suoraan yhteensopiva BuiltInAgent:n kanssa
 const runtime = new CopilotRuntime({
-  agents: { default: agent } as any,
+  agents: { default: agent } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 });
 
 export const POST = async (req: Request) => {

@@ -41,7 +41,7 @@ async function parseWithClaude(
 ): Promise<ClaudeFinancialData | null> {
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
   if (!anthropicKey) {
-    console.log("ANTHROPIC_API_KEY not set, skipping Claude parsing");
+    console.warn("ANTHROPIC_API_KEY not set, skipping Claude parsing");
     return null;
   }
 
@@ -95,7 +95,6 @@ TÄRKEÄÄ:
     if (!jsonMatch) return null;
 
     const parsed = JSON.parse(jsonMatch[0]) as ClaudeFinancialData;
-    console.log("Claude parsed financial data:", parsed);
     return parsed;
   } catch (error) {
     console.error("Claude parsing error:", error);
@@ -112,14 +111,14 @@ export async function searchPRH(
   // First try PRH XBRL API for official data
   try {
     const prhResponse = await fetch(
-      `https://avoindata.prh.fi/opendata-xbrl-api/v3/financials?businessId=${businessId}`
+      `https://avoindata.prh.fi/opendata-xbrl-api/v3/financials?businessId=${businessId}`,
+      { signal: AbortSignal.timeout(15_000) }
     );
 
     if (prhResponse.ok) {
       const prhData = await prhResponse.json();
       if (prhData.financials && prhData.financials.length > 0) {
         const latest = prhData.financials[0];
-        console.log("PRH XBRL data found for:", businessId);
         return {
           businessId,
           fiscalYear: latest.fiscalYear || new Date().getFullYear().toString(),
@@ -134,7 +133,7 @@ export async function searchPRH(
       }
     }
   } catch (error) {
-    console.log("PRH XBRL API not available:", error);
+    console.error("PRH XBRL API not available:", error);
   }
 
   // Fall back to Tavily + Claude for financial info
@@ -152,11 +151,11 @@ export async function searchPRH(
 
   try {
     const query = `${companyName} liikevaihto tulos tilinpäätös 2024`;
-    console.log("Tavily financial search:", query);
 
     const response = await fetch("https://api.tavily.com/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: AbortSignal.timeout(15_000),
       body: JSON.stringify({
         api_key: tavilyKey,
         query,

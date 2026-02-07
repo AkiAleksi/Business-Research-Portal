@@ -59,11 +59,11 @@ export async function searchYTJ(companyName: string): Promise<YTJCompanyData | n
       : `name=${encodeURIComponent(trimmed)}`;
     const url = `https://avoindata.prh.fi/opendata-ytj-api/v3/companies?${param}`;
 
-    console.log("YTJ API v3:", url);
     const response = await fetch(url, {
       method: "GET",
       headers: { Accept: "application/json" },
       cache: "no-store",
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!response.ok) {
@@ -72,7 +72,6 @@ export async function searchYTJ(companyName: string): Promise<YTJCompanyData | n
     }
 
     const data = await response.json();
-    console.log("YTJ API results:", data.totalResults);
 
     if (!data.companies || data.companies.length === 0) {
       return null;

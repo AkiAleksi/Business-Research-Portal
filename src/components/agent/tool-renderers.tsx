@@ -5,6 +5,9 @@ import { AgentStep } from "./agent-step";
 import { CompanyCard } from "@/components/results/company-card";
 import { FinancialsCard } from "@/components/results/financials-card";
 import { NewsCard } from "@/components/results/news-card";
+import type { YTJCompanyData } from "@/lib/services/ytj";
+import type { PRHFinancialData } from "@/lib/services/prh";
+import type { NewsItem } from "@/lib/services/news";
 
 function parseResult(result: unknown): Record<string, unknown> | null {
   if (result == null) return null;
@@ -56,7 +59,7 @@ export function ToolRenderers() {
         );
       }
 
-      return <CompanyCard data={result.data as never} />;
+      return <CompanyCard data={result.data as YTJCompanyData} />;
     },
   });
 
@@ -102,7 +105,7 @@ export function ToolRenderers() {
         );
       }
 
-      return <FinancialsCard data={result.data as never} />;
+      return <FinancialsCard data={result.data as PRHFinancialData} />;
     },
   });
 
@@ -145,7 +148,7 @@ export function ToolRenderers() {
 
       return (
         <NewsCard
-          items={data.items as never}
+          items={data.items as NewsItem[]}
           companyName={args.companyName}
         />
       );

@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,13 +11,18 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Building2, AlertCircle } from "lucide-react";
 
+const isDev = process.env.NODE_ENV === "development";
+
 function LoginForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const error = searchParams.get("error");
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
-  const [email, setEmail] = useState("dev@example.com");
-  const [password, setPassword] = useState("dev");
+  const rawCallbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = rawCallbackUrl.startsWith("/") && !rawCallbackUrl.includes("://") ? rawCallbackUrl : "/";
+  const [email, setEmail] = useState(isDev ? "dev@example.com" : "");
+  const [password, setPassword] = useState(isDev ? "dev" : "");
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const getErrorMessage = (error: string) => {
     switch (error) {
@@ -38,9 +43,17 @@ function LoginForm() {
   const handleCredentialsLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    await signIn("credentials", { email, password, callbackUrl });
-    setIsLoading(false);
+    setLoginError(null);
+    const result = await signIn("credentials", { email, password, callbackUrl, redirect: false });
+    if (result?.error) {
+      setLoginError("Virheellinen sähköposti tai salasana.");
+      setIsLoading(false);
+    } else {
+      router.push(callbackUrl);
+    }
   };
+
+  const displayError = loginError || (error ? getErrorMessage(error) : null);
 
   return (
     <Card className="glass-strong shadow-xl">
@@ -56,52 +69,55 @@ function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {error && (
+        {displayError && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{getErrorMessage(error)}</AlertDescription>
+            <AlertDescription>{displayError}</AlertDescription>
           </Alert>
         )}
 
-        {/* Development login form */}
-        <form onSubmit={handleCredentialsLogin} className="space-y-3">
-          <div className="rounded-md bg-muted/50 p-2 text-xs text-muted-foreground text-center">
-            Kehitystila - mikä tahansa sähköposti toimii
-          </div>
-          <Input
-            type="email"
-            placeholder="Sähköposti"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <Input
-            type="password"
-            placeholder="Salasana"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Button type="submit" className="w-full shadow-md shadow-primary/20" disabled={isLoading}>
-            {isLoading ? "Kirjaudutaan..." : "Kirjaudu kehitystilillä"}
-          </Button>
-        </form>
+        {isDev && (
+          <form onSubmit={handleCredentialsLogin} className="space-y-3">
+            <div className="rounded-md bg-muted/50 p-2 text-xs text-muted-foreground text-center">
+              Kehitystila - mikä tahansa sähköposti toimii
+            </div>
+            <Input
+              type="email"
+              placeholder="Sähköposti"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="Salasana"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <Button type="submit" className="w-full shadow-md shadow-primary/20" disabled={isLoading}>
+              {isLoading ? "Kirjaudutaan..." : "Kirjaudu kehitystilillä"}
+            </Button>
+          </form>
+        )}
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+        {isDev && (
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">tai</span>
+            </div>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">tai</span>
-          </div>
-        </div>
+        )}
 
         <Button
           className="w-full"
           variant="outline"
           onClick={() => signIn("google", { callbackUrl })}
         >
-          <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+          <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"

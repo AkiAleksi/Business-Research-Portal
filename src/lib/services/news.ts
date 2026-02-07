@@ -46,13 +46,13 @@ export async function searchNews(companyName: string): Promise<NewsSearchResult>
 
   try {
     const query = `${companyName} uutiset yritys`;
-    console.log("Tavily search:", query);
 
     const response = await fetch("https://api.tavily.com/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      signal: AbortSignal.timeout(15_000),
       body: JSON.stringify({
         api_key: apiKey,
         query,
@@ -78,7 +78,6 @@ export async function searchNews(companyName: string): Promise<NewsSearchResult>
     }
 
     const data: TavilyResponse = await response.json();
-    console.log("Tavily results:", data.results?.length || 0);
 
     const items: NewsItem[] = data.results.map((result, index) => ({
       id: String(index + 1),
