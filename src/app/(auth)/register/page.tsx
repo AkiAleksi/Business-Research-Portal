@@ -63,7 +63,7 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/");
+      window.location.href = "/";
     } catch {
       setError("Rekisteröinti epäonnistui. Yritä uudelleen.");
       setIsLoading(false);

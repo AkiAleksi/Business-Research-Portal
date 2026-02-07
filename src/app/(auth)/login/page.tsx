@@ -47,7 +47,7 @@ function LoginForm() {
       setLoginError("Virheellinen sähköposti tai salasana.");
       setIsLoading(false);
     } else {
-      router.push(callbackUrl);
+      window.location.href = callbackUrl;
     }
   };
 
