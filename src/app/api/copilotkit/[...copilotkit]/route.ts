@@ -74,7 +74,7 @@ const runtime = new CopilotRuntime({
   agents: { default: agent } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 });
 
-export const POST = async (req: Request) => {
+const handler = async (req: Request) => {
   const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
     runtime,
     endpoint: "/api/copilotkit",
@@ -83,3 +83,6 @@ export const POST = async (req: Request) => {
 
   return handleRequest(req);
 };
+
+export const GET = handler;
+export const POST = handler;
