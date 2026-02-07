@@ -1,36 +1,44 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-const isDev = process.env.NODE_ENV === "development";
+import { compare } from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    // Development credentials provider
-    ...(isDev
-      ? [
-          CredentialsProvider({
-            name: "Kehitystili",
-            credentials: {
-              email: { label: "Sähköposti", type: "email", placeholder: "dev@example.com" },
-              password: { label: "Salasana", type: "password" },
-            },
-            async authorize(credentials) {
-              // Any email/password combo works in dev
-              if (credentials?.email) {
-                return {
-                  id: "dev-user-1",
-                  name: credentials.email.split("@")[0],
-                  email: credentials.email,
-                  image: null,
-                };
-              }
-              return null;
-            },
-          }),
-        ]
-      : []),
-    // Google OAuth (production)
+    CredentialsProvider({
+      name: "Sähköposti",
+      credentials: {
+        email: { label: "Sähköposti", type: "email" },
+        password: { label: "Salasana", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email.toLowerCase() },
+        });
+
+        if (!user || !user.hashedPassword) {
+          return null;
+        }
+
+        const isValid = await compare(credentials.password, user.hashedPassword);
+
+        if (!isValid) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        };
+      },
+    }),
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
           GoogleProvider({
@@ -48,6 +56,20 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "google" && user.email) {
+        await prisma.user.upsert({
+          where: { email: user.email },
+          update: { name: user.name, image: user.image },
+          create: {
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          },
+        });
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;

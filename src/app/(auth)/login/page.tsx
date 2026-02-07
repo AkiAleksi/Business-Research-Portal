@@ -11,16 +11,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Building2, AlertCircle } from "lucide-react";
 
-const isDev = process.env.NODE_ENV === "development";
-
 function LoginForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const error = searchParams.get("error");
   const rawCallbackUrl = searchParams.get("callbackUrl") || "/";
   const callbackUrl = rawCallbackUrl.startsWith("/") && !rawCallbackUrl.includes("://") ? rawCallbackUrl : "/";
-  const [email, setEmail] = useState(isDev ? "dev@example.com" : "");
-  const [password, setPassword] = useState(isDev ? "dev" : "");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -76,41 +74,34 @@ function LoginForm() {
           </Alert>
         )}
 
-        {isDev && (
-          <form onSubmit={handleCredentialsLogin} className="space-y-3">
-            <div className="rounded-md bg-muted/50 p-2 text-xs text-muted-foreground text-center">
-              Kehitystila - mikä tahansa sähköposti toimii
-            </div>
-            <Input
-              type="email"
-              placeholder="Sähköposti"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Salasana"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <Button type="submit" className="w-full shadow-md shadow-primary/20" disabled={isLoading}>
-              {isLoading ? "Kirjaudutaan..." : "Kirjaudu kehitystilillä"}
-            </Button>
-          </form>
-        )}
+        <form onSubmit={handleCredentialsLogin} className="space-y-3">
+          <Input
+            type="email"
+            placeholder="Sähköposti"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Salasana"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit" className="w-full shadow-md shadow-primary/20" disabled={isLoading}>
+            {isLoading ? "Kirjaudutaan..." : "Kirjaudu sisään"}
+          </Button>
+        </form>
 
-        {isDev && (
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">tai</span>
-            </div>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
           </div>
-        )}
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">tai</span>
+          </div>
+        </div>
 
         <Button
           className="w-full"

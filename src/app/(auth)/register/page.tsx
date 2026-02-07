@@ -1,17 +1,82 @@
 "use client";
 
+import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Building2, AlertCircle } from "lucide-react";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (password.length < 8) {
+      setError("Salasanan tulee olla vähintään 8 merkkiä.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Salasanat eivät täsmää.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error);
+        setIsLoading(false);
+        return;
+      }
+
+      // Auto-login after registration
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Rekisteröinti onnistui, mutta automaattinen kirjautuminen epäonnistui. Kirjaudu sisään manuaalisesti.");
+        setIsLoading(false);
+        return;
+      }
+
+      router.push("/");
+    } catch {
+      setError("Rekisteröinti epäonnistui. Yritä uudelleen.");
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <Card>
+    <Card className="glass-strong shadow-xl">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
-          <Building2 className="h-10 w-10 text-primary" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white shadow-lg shadow-primary/25">
+            <Building2 className="h-8 w-8" />
+          </div>
         </div>
         <CardTitle className="text-2xl">Luo tili</CardTitle>
         <CardDescription>
@@ -19,12 +84,63 @@ export default function RegisterPage() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <form onSubmit={handleRegister} className="space-y-3">
+          <Input
+            type="text"
+            placeholder="Nimi"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            type="email"
+            placeholder="Sähköposti"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Salasana (vähintään 8 merkkiä)"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+          />
+          <Input
+            type="password"
+            placeholder="Vahvista salasana"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            minLength={8}
+          />
+          <Button type="submit" className="w-full shadow-md shadow-primary/20" disabled={isLoading}>
+            {isLoading ? "Rekisteröidään..." : "Rekisteröidy"}
+          </Button>
+        </form>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">tai</span>
+          </div>
+        </div>
+
         <Button
           className="w-full"
           variant="outline"
           onClick={() => signIn("google", { callbackUrl: "/" })}
         >
-          <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+          <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"
