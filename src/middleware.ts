@@ -23,8 +23,7 @@ export default withAuth(
         }
 
         const isProtectedRoute = req.nextUrl.pathname === "/" ||
-                                 req.nextUrl.pathname.startsWith("/research") ||
-                                 req.nextUrl.pathname.startsWith("/api/copilotkit");
+                                 req.nextUrl.pathname.startsWith("/research");
 
         if (isProtectedRoute) {
           return !!token;

@@ -6,6 +6,8 @@ import {
 import { BuiltInAgent } from "@copilotkitnext/agent";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { searchYTJ } from "@/lib/services/ytj";
 import { searchPRH } from "@/lib/services/prh";
 import { searchNews } from "@/lib/services/news";
@@ -74,7 +76,7 @@ const runtime = new CopilotRuntime({
   agents: { default: agent } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 });
 
-const handler = async (req: Request) => {
+const handleCopilotKit = async (req: Request) => {
   const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
     runtime,
     endpoint: "/api/copilotkit",
@@ -84,5 +86,12 @@ const handler = async (req: Request) => {
   return handleRequest(req);
 };
 
-export const GET = handler;
-export const POST = handler;
+export const GET = handleCopilotKit;
+
+export const POST = async (req: Request) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+  return handleCopilotKit(req);
+};
