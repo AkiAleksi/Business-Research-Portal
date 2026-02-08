@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Building2, AlertCircle } from "lucide-react";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -158,11 +157,11 @@ export default function RegisterPage() {
               fill="#EA4335"
             />
           </svg>
-          Rekisteröidy Google-tilillä
+          Jatka Google-tilillä
         </Button>
 
         <p className="text-xs text-center text-muted-foreground">
-          Rekisteröitymällä hyväksyt palvelun käyttöehdot.
+          Google-tilillä kirjautuessa tili luodaan automaattisesti.
         </p>
       </CardContent>
       <CardFooter className="flex justify-center">

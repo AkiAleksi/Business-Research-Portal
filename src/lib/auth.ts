@@ -70,9 +70,20 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        token.id = user.id;
+        if (account?.provider === "google" && user.email) {
+          // Google OAuth: use database CUID instead of Google's profile ID
+          const dbUser = await prisma.user.findUnique({
+            where: { email: user.email },
+            select: { id: true },
+          });
+          if (dbUser) {
+            token.id = dbUser.id;
+          }
+        } else {
+          token.id = user.id;
+        }
       }
       return token;
     },
