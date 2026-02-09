@@ -4,6 +4,12 @@ An AI-powered company research platform built on **AG-UI (Agent User Interface)*
 
 **Live:** [business-research-portal.vercel.app](https://business-research-portal.vercel.app)
 
+### Demo
+
+https://github.com/user-attachments/assets/business-research-portal-demo.mp4
+
+[Watch the demo video](./business-research-portal-demo.mp4)
+
 ---
 
 ## Why AG-UI?
