@@ -6,8 +6,6 @@ An AI-powered company research platform built on **AG-UI (Agent User Interface)*
 
 ### Demo
 
-https://github.com/user-attachments/assets/business-research-portal-demo.mp4
-
 [Watch the demo video](./business-research-portal-demo.mp4)
 
 ---
