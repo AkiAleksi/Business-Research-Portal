@@ -2,6 +2,7 @@
 
 import { useRenderToolCall } from "@copilotkit/react-core";
 import { AgentStep } from "./agent-step";
+import type { SubStep } from "./agent-step";
 import { CompanyCard } from "@/components/results/company-card";
 import { FinancialsCard } from "@/components/results/financials-card";
 import { NewsCard } from "@/components/results/news-card";
@@ -21,6 +22,25 @@ function parseResult(result: unknown): Record<string, unknown> | null {
   }
   return null;
 }
+
+const ytjSubSteps: SubStep[] = [
+  { label: "Yhdistetään YTJ-rekisteriin...", delayMs: 0 },
+  { label: "Haetaan yritystietoja kaupparekisteristä...", delayMs: 1500 },
+  { label: "Pisteytetään ja valitaan paras osuma...", delayMs: 3500 },
+];
+
+const prhSubSteps: SubStep[] = [
+  { label: "Haetaan virallisia tilinpäätöstietoja PRH:sta...", delayMs: 0 },
+  { label: "Etsitään taloustietoja uutislähteistä (Tavily)...", delayMs: 3000 },
+  { label: "Analysoidaan tuloksia tekoälyllä (Claude AI)...", delayMs: 6000 },
+  { label: "Kootaan talousyhteenveto...", delayMs: 10000 },
+];
+
+const newsSubSteps: SubStep[] = [
+  { label: "Yhdistetään uutispalveluun...", delayMs: 0 },
+  { label: "Haetaan: Kauppalehti, HS, YLE, Talouselämä...", delayMs: 1500 },
+  { label: "Käsitellään ja järjestetään artikkelit...", delayMs: 3500 },
+];
 
 export function ToolRenderers() {
   useRenderToolCall({
@@ -42,6 +62,7 @@ export function ToolRenderers() {
             description={`Haetaan tietoja: ${args.companyName ?? ""}...`}
             status="loading"
             source="YTJ"
+            subSteps={ytjSubSteps}
           />
         );
       }
@@ -88,6 +109,7 @@ export function ToolRenderers() {
             description={`Haetaan taloustietoja: ${args.companyName ?? ""}...`}
             status="loading"
             source="PRH"
+            subSteps={prhSubSteps}
           />
         );
       }
@@ -128,6 +150,7 @@ export function ToolRenderers() {
             description={`Haetaan uutisia: ${args.companyName ?? ""}...`}
             status="loading"
             source="Uutiset"
+            subSteps={newsSubSteps}
           />
         );
       }
